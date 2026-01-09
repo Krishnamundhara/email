@@ -1,0 +1,59 @@
+services:
+  # Backend API Service
+  - type: web
+    name: emailer-backend
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5001
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM_EMAIL
+        sync: false
+      - key: SMTP_FROM_NAME
+        value: Email Campaign Service
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MAX_BATCH_SIZE
+        value: 50
+      - key: BATCH_DELAY_MS
+        value: 500
+      - key: MAX_RETRIES
+        value: 3
+    healthCheckPath: /api/health
+
+  # Frontend Web Service
+  - type: web
+    name: emailer-frontend
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://emailer-backend.onrender.com/api
+      - key: NEXT_PUBLIC_ADMIN_EMAIL
+        sync: false
+      - key: NEXT_PUBLIC_ADMIN_PASSWORD
+        sync: false
